@@ -13,7 +13,7 @@ class Snake:
         self.apple = pygame.transform.scale(self.apple, (20, 20))
 
         self.time_start = time.time()
-        self.field_border = False
+        self.field_border = True
         self.dir_move = 'NONE'
         self.cell_size = 20
         self.blocks_x = width // self.cell_size
@@ -53,7 +53,7 @@ class Snake:
 
             pygame.display.flip()
 
-            pygame.time.delay(50)
+            pygame.time.delay(100)
 
 
     def isCollisionApple(self):
