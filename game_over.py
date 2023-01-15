@@ -7,8 +7,8 @@ class End:
         self.widht = width
         self.hieght = height
 
-        self.menu_icon = pygame.image.load(r'Data\Icons\menu_icon.png')
-        self.return_icon = pygame.image.load(r'Data\Icons\return_icon.png')
+        self.menu_icon = pygame.image.load(r'Data\menu_icon.png')
+        self.return_icon = pygame.image.load(r'Data\return_icon.png')
 
     def mainLoop(self, result):
         self.result = result

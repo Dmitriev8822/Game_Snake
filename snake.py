@@ -13,7 +13,7 @@ class Snake:
         self.apple = pygame.transform.scale(self.apple, (20, 20))
 
         self.time_start = time.time()
-        self.field_border = True
+        self.field_border = False
         self.dir_move = 'NONE'
         self.cell_size = 20
         self.blocks_x = width // self.cell_size
