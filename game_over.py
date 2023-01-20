@@ -11,8 +11,6 @@ class End:
         self.return_icon = pygame.image.load(r'Data\return_icon.png')
 
     def mainLoop(self, result):
-        self.result = result
-
         while 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -25,19 +23,17 @@ class End:
                         return 2
 
             self.screen.fill((50, 50, 50))
-            self.draw()
+            self.draw(result)
 
             pygame.display.flip()
-            pygame.time.delay(50)
+            pygame.time.delay(300)
 
-    def draw(self):
-        serif_font_100 = pygame.font.SysFont('serif', 100)
-        serif_font_50 = pygame.font.SysFont('serif', 50)
-        text_gv = serif_font_100.render("Game over", True, (0, 255, 0))
-        text_ys = serif_font_50.render(f'Your score: {self.result}', True, (255, 255, 0))
+    def draw(self, result):
+        st_font_100 = pygame.font.SysFont('bauhaus93', 100)
+        st_font_50 = pygame.font.SysFont('bauhaus93', 50)
+        text_gv = st_font_100.render("Game over!", True, (0, 255, 0))
+        text_ys = st_font_50.render(f'Your score: {result}', True, (255, 255, 0))
         self.screen.blit(text_gv, (self.width // 2 - 230, self.height // 2 - 260))
         self.screen.blit(text_ys, (self.width // 2 - 140, self.height // 2 - 130))
-        # pygame.draw.rect(self.screen, (0, 255, 0), [self.widht // 2 - 70, self.hieght // 2 - 50, 40, 40], 3)
-        # pygame.draw.rect(self.screen, (0, 255, 0), [self.widht // 2 + 60, self.hieght // 2 - 50, 40, 40], 3)
         self.screen.blit(self.menu_icon, (self.width // 2 - 70, self.height // 2 - 50))
         self.screen.blit(self.return_icon, (self.width // 2 + 60, self.height // 2 - 50))

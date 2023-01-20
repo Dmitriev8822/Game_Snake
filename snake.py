@@ -172,16 +172,26 @@ class Snake:
         if self.dir_move == 'NONE':
             self.time_start = time.time()
 
-        timer = serif_font_30.render(f'Time: {int(time.time() - self.time_start)}', True, (100, 100, 255))
-        self.screen.blit(timer, (self.width - 80, 10))
+        unit = 's'
+        time_out = int(time.time() - self.time_start)
+        time_out = int(time_out)
+        if time_out > 60:
+            time_out //= 60
+            unit = 'm'
+        if time_out > 60:
+            time_out //= 60
+            unit = 'h'
+
+        timer = serif_font_30.render(f'Time: {time_out} ({unit})', True, (100, 100, 255))
+        self.screen.blit(timer, (self.width - 105, 10))
 
     def boardDraw(self):
         cells = 20
         qx = self.width // cells
         qy = self.height // cells
 
-        color_lines = (0, 0, 0)
-        self.screen.fill((50, 50, 50))
+        color_lines = (20, 20, 20)
+        self.screen.fill((60, 60, 60))
 
         for i in range(qx):
             pygame.draw.aaline(self.screen, color_lines, [i * cells, 0], [i * cells, self.height])

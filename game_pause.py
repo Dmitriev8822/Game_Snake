@@ -23,7 +23,7 @@ class Setting:
             self.draw()
 
             pygame.display.flip()
-            pygame.time.delay(100)
+            pygame.time.delay(300)
 
     def draw(self):
         serif_font_100 = pygame.font.SysFont('serif', 100)
