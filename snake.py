@@ -1,6 +1,7 @@
 import pygame
 import time
 from random import randint
+from game_pause import Setting
 
 
 class Snake:
@@ -21,24 +22,35 @@ class Snake:
         self.snake = [[self.blocks_x // 2, self.blocks_y // 2]]
         self.generationApple()
 
+        self.settings = Setting(self.screen, self.width, self.height)
+
     def mainLoop(self):
         while 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return -1
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_UP and self.dir_move != 'DOWN':
+
+                    if event.key == pygame.K_ESCAPE:
+                        time_in_set = time.time()
+                        answer = self.settings.mainLoop()
+                        if answer == -1:
+                            return -1
+
+                        self.time_start = int(self.time_start + (time.time() - time_in_set))
+
+                    if (event.key == pygame.K_UP or event.key == pygame.K_w) and self.dir_move != 'DOWN':
                         self.dir_move = 'UP'
-                    if event.key == pygame.K_DOWN and self.dir_move != 'UP':
+                    if (event.key == pygame.K_DOWN or event.key == pygame.K_s) and self.dir_move != 'UP':
                         self.dir_move = 'DOWN'
-                    if event.key == pygame.K_RIGHT and self.dir_move != 'LEFT':
+                    if (event.key == pygame.K_RIGHT or event.key == pygame.K_d) and self.dir_move != 'LEFT':
                         self.dir_move = 'RIGHT'
-                    if event.key == pygame.K_LEFT and self.dir_move != 'RIGHT':
+                    if (event.key == pygame.K_LEFT or event.key == pygame.K_a) and self.dir_move != 'RIGHT':
                         self.dir_move = 'LEFT'
                     if event.key == pygame.K_SPACE:
                         self.dir_move = 'NONE'
 
-            self.screen.fill((0, 0, 0))
+            self.boardDraw()
 
             self.draw_border()
 
@@ -47,7 +59,7 @@ class Snake:
             self.drawApple()
 
             if answer == -1:
-                return len(self.snake)
+                return len(self.snake) - 1
 
             self.printScore()
 
@@ -59,6 +71,7 @@ class Snake:
     def isCollisionApple(self):
         if self.snake[-1] == self.apple_coords:
             self.snake.insert(0, self.snake[0].copy())
+
             self.generationApple()
 
     def generationApple(self):
@@ -153,8 +166,29 @@ class Snake:
 
     def printScore(self):
         serif_font_30 = pygame.font.SysFont('serif', 20)
-        score = serif_font_30.render(f'Your score: {len(self.snake)}', True, (255, 255, 0))
+        score = serif_font_30.render(f'Your score: {len(self.snake) - 1}', True, (255, 255, 0))
         self.screen.blit(score, (10, 10))
+
+        if self.dir_move == 'NONE':
+            self.time_start = time.time()
 
         timer = serif_font_30.render(f'Time: {int(time.time() - self.time_start)}', True, (100, 100, 255))
         self.screen.blit(timer, (self.width - 80, 10))
+
+    def boardDraw(self):
+        cells = 20
+        qx = self.width // cells
+        qy = self.height // cells
+
+        color_lines = (0, 0, 0)
+        self.screen.fill((50, 50, 50))
+
+        for i in range(qx):
+            pygame.draw.aaline(self.screen, color_lines, [i * cells, 0], [i * cells, self.height])
+
+        pygame.draw.aaline(self.screen, color_lines, [qx * cells - 1, 0], [qx * cells - 1, self.height])
+
+        for i in range(qy):
+            pygame.draw.aaline(self.screen, color_lines, [0, i * cells], [self.width, i * cells])
+
+        pygame.draw.aaline(self.screen, color_lines, [0, qy * cells - 1], [self.width, qy * cells - 1])

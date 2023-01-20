@@ -1,6 +1,6 @@
 import pygame
 from random import randint
-from menu_game import Menu
+from game_menu import Menu
 from snake import Snake
 from game_over import End
 
@@ -12,8 +12,8 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption("Snake game")
 
-    # snake_icon = pygame.image.load(r'Data\\SnakeIco.png')
-    # pygame.display.set_icon(snake_icon)
+    snake_icon = pygame.image.load(r'Data\\SnakeIco.png')
+    pygame.display.set_icon(snake_icon)
 
     menu = Menu(screen, width, height)
     end = End(screen, width, height)
