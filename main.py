@@ -21,7 +21,7 @@ if __name__ == '__main__':
     ismenu = 1
     running = True
     while running:
-        snake = Snake(screen, width, height)
+        snake = Snake(screen, width, height, True)
         if ismenu:
             answer = menu.mainLoop()
             if answer == -1:

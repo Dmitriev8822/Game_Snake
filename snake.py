@@ -3,15 +3,20 @@ import time
 from random import randint
 from game_pause import Setting
 
+
 class Snake:
-    def __init__(self, screen, width, height):
+    def __init__(self, screen, width, height, isCareer):
         self.screen = screen
         self.width = width
         self.height = height
         self.cell_size = 20
+        self.isCareer = isCareer
 
         self.apple = pygame.image.load(r'Data\\apple.png')
         self.apple = pygame.transform.scale(self.apple, (20, 20))
+
+        self.bomb = pygame.image.load(r'Data\\bomb.png')
+        self.bomb = pygame.transform.scale(self.bomb, (20, 20))
 
         self.time_start = time.time()
         self.field_border = False
@@ -22,6 +27,10 @@ class Snake:
         self.generationApple()
 
         self.settings = Setting(self.screen, self.width, self.height)
+
+        if isCareer:
+            self.field_border = True
+            self.startLevel()
 
     def mainLoop(self):
         while 1:
@@ -51,11 +60,10 @@ class Snake:
 
             self.boardDraw()
 
-            self.draw_border()
-
             answer = self.moveSnake()
             self.drawSnake()
             self.drawApple()
+            self.career()
 
             if answer == -1:
                 return len(self.snake) - 1
@@ -65,7 +73,6 @@ class Snake:
             pygame.display.flip()
 
             pygame.time.delay(100)
-
 
     def isCollisionApple(self):
         if self.snake[-1] == self.apple_coords:
@@ -154,12 +161,6 @@ class Snake:
         pygame.draw.circle(self.screen, (0, 255, 0), [head[0] * self.cell_size + self.cell_size // 2,
                                                  head[1] * self.cell_size + self.cell_size // 2], 8)
 
-    def draw_border(self):
-        if self.field_border:
-            pygame.draw.rect(self.screen, (150, 0, 0),
-                             [0, 2 * self.cell_size, self.width, self.height - 2 * self.cell_size], 2)
-        pygame.draw.rect(self.screen, (50, 50, 50), [0, 0, self.width, 2 * self.cell_size])
-
     def drawApple(self):
         self.screen.blit(self.apple, (self.apple_coords[0] * self.cell_size, self.apple_coords[1] * self.cell_size))
 
@@ -201,3 +202,50 @@ class Snake:
             pygame.draw.aaline(self.screen, color_lines, [0, i * cells], [self.width, i * cells])
 
         pygame.draw.aaline(self.screen, color_lines, [0, qy * cells - 1], [self.width, qy * cells - 1])
+
+        if self.field_border:
+            pygame.draw.rect(self.screen, (150, 0, 0),
+                             [0, 2 * self.cell_size, self.width, self.height - 2 * self.cell_size], 2)
+        pygame.draw.rect(self.screen, (50, 50, 50), [0, 0, self.width, 2 * self.cell_size])
+
+    def career(self):
+        if self.isCareer:
+            self.targetOut()
+            self.drawBombs()
+
+    def startLevel(self):
+        my_level = -1
+        self.target = 0
+        self.qutyBombs = 0
+        with open("game_data.txt", 'r', encoding='utf-8') as file:
+            levels = file.read().split()
+            for level in levels:
+                level = level.split(';')
+                if level[0] == 'LevelA':
+                    my_level = level[1]
+
+        self.target = levels[int(my_level) - 1].split(';')[1]
+        self.qutyBombs = int(levels[int(my_level) - 1].split(';')[2])
+
+        self.genBomb()
+
+    def genBomb(self):
+        self.bombs = list()
+        bomb_coords = list()
+        coords_not_normal = True
+        for i in range(self.qutyBombs):
+            while coords_not_normal:
+                bomb_coords = [randint(1, self.blocks_x - 2),
+                                randint(4, self.blocks_y - 2)]
+                if bomb_coords not in self.snake:
+                    self.bombs.append(bomb_coords)
+                    coords_not_normal = False
+
+    def targetOut(self):
+        serif_font_30 = pygame.font.SysFont('serif', 20)
+        score = serif_font_30.render(f'Target: {self.target}', True, (255, 0, 0))
+        self.screen.blit(score, (470, 10))
+
+    def drawBombs(self):
+        for coords in self.bombs:
+            self.screen.blit(self.bomb, (coords[0] * self.cell_size, coords[1] * self.cell_size))
