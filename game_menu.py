@@ -6,6 +6,11 @@ class Menu:
         self.screen = screen
         self.width = width
         self.height = height
+        self.cell_size = 20
+
+        self.x = 7
+        self.y = -5
+        self.anim = 1
 
     def mainLoop(self):
         in_start = False
@@ -33,21 +38,25 @@ class Menu:
                 self.buttonIllumination()
             self.drawStartButton()
             self.drawName()
+            self.snakeGo()
 
             pygame.display.flip()
             pygame.time.delay(100)
 
     def drawStartButton(self):
         st_font_50 = pygame.font.SysFont('bauhaus93', 50)
-        text = st_font_50.render(f'Start game', True, (0, 255, 0))
-        self.screen.blit(text, (self.width // 2 - 116, self.height // 2 + 161))
+        text = st_font_50.render(f'Endless snake', True, (0, 255, 0))
+        self.screen.blit(text, (self.width // 2 - 150, self.height // 2 + 161))
 
-        pygame.draw.rect(self.screen, (0, 255, 0), [self.width // 2 - 150, self.height // 2 + 150, 300, 80], 3)
+        pygame.draw.rect(self.screen, (0, 255, 0), [self.width // 2 - 170, self.height // 2 + 150, 340, 80], 3)
 
     def drawName(self):
         st_font_100 = pygame.font.SysFont('bauhaus93', 100)
         text = st_font_100.render(f'Snake game', True, (0, 255, 0))
-        self.screen.blit(text, (self.width // 2 - 260, self.height // 2 - 200))
+        self.screen.blit(text, (self.width // 2 - 260, self.height // 2 - 280))
 
     def buttonIllumination(self):
-        pygame.draw.rect(self.screen, (0, 100, 0), [self.width // 2 - 150, self.height // 2 + 150, 300, 80], 90)
+        pygame.draw.rect(self.screen, (0, 100, 0), [self.width // 2 - 170, self.height // 2 + 150, 340, 80], 90)
+
+    def snakeGo(self):
+        pass

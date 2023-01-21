@@ -3,12 +3,12 @@ import time
 from random import randint
 from game_pause import Setting
 
-
 class Snake:
     def __init__(self, screen, width, height):
         self.screen = screen
         self.width = width
         self.height = height
+        self.cell_size = 20
 
         self.apple = pygame.image.load(r'Data\\apple.png')
         self.apple = pygame.transform.scale(self.apple, (20, 20))
@@ -16,7 +16,6 @@ class Snake:
         self.time_start = time.time()
         self.field_border = False
         self.dir_move = 'NONE'
-        self.cell_size = 20
         self.blocks_x = width // self.cell_size
         self.blocks_y = height // self.cell_size
         self.snake = [[self.blocks_x // 2, self.blocks_y // 2]]
@@ -175,10 +174,10 @@ class Snake:
         unit = 's'
         time_out = int(time.time() - self.time_start)
         time_out = int(time_out)
-        if time_out > 60:
+        if time_out >= 60:
             time_out //= 60
             unit = 'm'
-        if time_out > 60:
+        if time_out >= 60:
             time_out //= 60
             unit = 'h'
 
