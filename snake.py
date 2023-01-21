@@ -11,6 +11,7 @@ class Snake:
         self.height = height
         self.cell_size = 20
         self.isCareer = isCareer
+        self.bomb_timer = time.time()
 
         self.apple = pygame.image.load(r'Data\\apple.png')
         self.apple = pygame.transform.scale(self.apple, (20, 20))
@@ -63,10 +64,13 @@ class Snake:
             answer = self.moveSnake()
             self.drawSnake()
             self.drawApple()
-            self.career()
+            answer_c = self.career()
 
             if answer == -1:
                 return len(self.snake) - 1
+
+            if answer_c == -1:
+                return -1
 
             self.printScore()
 
@@ -210,8 +214,18 @@ class Snake:
 
     def career(self):
         if self.isCareer:
+            if time.time() - self.bomb_timer >= 10:
+                self.genBomb()
+                self.bomb_timer = time.time()
+
             self.targetOut()
             self.drawBombs()
+            if self.isCollisionBomb() == 1:
+                if len(self.snake) > 4:
+                    self.genBomb()
+                    self.snake = self.snake[:-4]
+                else:
+                    return -1
 
     def startLevel(self):
         my_level = -1
@@ -232,8 +246,9 @@ class Snake:
     def genBomb(self):
         self.bombs = list()
         bomb_coords = list()
-        coords_not_normal = True
+        print(self.qutyBombs)
         for i in range(self.qutyBombs):
+            coords_not_normal = True
             while coords_not_normal:
                 bomb_coords = [randint(1, self.blocks_x - 2),
                                 randint(4, self.blocks_y - 2)]
@@ -249,3 +264,10 @@ class Snake:
     def drawBombs(self):
         for coords in self.bombs:
             self.screen.blit(self.bomb, (coords[0] * self.cell_size, coords[1] * self.cell_size))
+
+    def isCollisionBomb(self):
+        for coords in self.bombs:
+            if coords == self.snake[-1]:
+                return 1
+
+        return 0
