@@ -1,6 +1,0 @@
-Level1;5;0
-Level2;5;1
-Level3;10;2
-Level4;25;3
-Level5;50;5
-LevelA;5
