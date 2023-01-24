@@ -1,0 +1,5 @@
+Status1;Beginner
+Status2;Explorer
+Status3;Opponent
+Status4;Professional
+Status5;Champion
