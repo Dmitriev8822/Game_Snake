@@ -4,4 +4,3 @@ Level3;10;2
 Level4;25;3
 Level5;50;5
 LevelA;1
-LevelMax;0
