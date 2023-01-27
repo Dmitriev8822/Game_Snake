@@ -46,6 +46,12 @@ def snakeGame(career):
     while 1:
         answer2 = 0
         answer = snake.mainLoop(career)
+
+        if answer == 4:
+            return 1
+        elif answer == 5:
+            return 2
+
         if answer == -1:
             return -1
         elif answer == 1:
@@ -59,6 +65,7 @@ def snakeGame(career):
 
 
 if __name__ == '__main__':
+    pygame.mixer.pre_init(44100, -16, 1, 512)
     pygame.init()
     size = width, height = 1000, 800
 
@@ -67,6 +74,9 @@ if __name__ == '__main__':
 
     snake_icon = pygame.image.load(r'Data\\Img\\SnakeIco.png')
     pygame.display.set_icon(snake_icon)
+
+    pygame.mixer.music.load(r'Data\\Music\\sound2.mp3')
+    pygame.mixer.music.play(-1)
 
     isMenu = 1
     answer = 0
@@ -91,6 +101,5 @@ if __name__ == '__main__':
                 isMenu = True
             elif answer2 == 2:
                 isMenu = False
-
 
     pygame.quit()

@@ -1,4 +1,5 @@
 from random import randint
+from game_pause import Pause
 import pygame
 import time
 
@@ -14,8 +15,9 @@ class Snake:
         self.blocks_y = height // self.cell_size
         self.snake = [[self.blocks_x // 2, self.blocks_y // 2]]
         self.dir_move = 'NONE'
+        self.bombs = list()
 
-        self.loadImg()
+        self.loadFiles()
 
         self.isCareer = False
         self.field_border = False
@@ -25,21 +27,40 @@ class Snake:
         self.time_start = time.time()
         self.bombs = list()
 
-        # self.settings = Setting(screen, width, height)
-
     def mainLoop(self, career):
-        self.careerMod(career)
+        self.pause = Pause(self.screen, self.width, self.height)
+
+        if career:
+            self.isCareer = True
+            self.field_border = True
+            self.drawLevelQ()
+
         self.boardDraw()
         self.generationApple()
-        if self.isCareer:
-            self.startLevel()
+        self.startLevel()
 
-        while 1:
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return -1
 
                 if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        time_in_pause = time.time()
+                        answer = self.pause.mainLoop()
+                        if answer == -1:
+                            return -1
+                        if answer == 1:
+                            return 4
+                        elif answer == 2:
+                            return 5
+
+                        self.boardDraw()
+                        self.blitAgain()
+
+                        time_in_pause = time.time() - time_in_pause
+                        self.time_start = self.time_start + time_in_pause
+
                     if event.key == pygame.K_q:
                         return 1
                     if (event.key == pygame.K_UP or event.key == pygame.K_w) and self.dir_move != 'DOWN':
@@ -122,6 +143,7 @@ class Snake:
                              [self.snake[-2][0] * self.cell_size + 1, self.snake[-2][1] * self.cell_size + 1,
                               self.cell_size - 2, self.cell_size - 2])
 
+            self.sound_apple.play()
             self.generationApple()
 
         elif self.dir_move != 'NONE':
@@ -152,6 +174,17 @@ class Snake:
         pygame.draw.circle(self.screen, (0, 255, 0), [head[0] * self.cell_size + self.cell_size // 2,
                                                  head[1] * self.cell_size + self.cell_size // 2], 8)
 
+    def blitAgain(self):
+        self.screen.blit(self.appleImg, (self.apple_coords[0] * self.cell_size, self.apple_coords[1] * self.cell_size))
+
+        for coords in self.bombs:
+            self.screen.blit(self.bombImg, (coords[0] * self.cell_size, coords[1] * self.cell_size))
+
+        for coords in self.snake[:-1]:
+            pygame.draw.rect(self.screen, (0, 255, 0),
+                             [coords[0] * self.cell_size + 1, coords[1] * self.cell_size + 1,
+                              self.cell_size - 2, self.cell_size - 2])
+
     def generationApple(self):
         self.apple_coords = list()
         coords_not_normal = True
@@ -171,6 +204,24 @@ class Snake:
         if self.snake[-1] in self.snake[:-1] and len(self.snake) > 2:
             return 1
         return 0
+
+    def drawLevelQ(self):
+        self.screen.fill((53, 53, 53))
+
+        my_level = -1
+        with open(r'Data\\GData\\Levels.txt', 'r', encoding='utf-8') as file:
+            levels = file.read().split()
+            for level in levels:
+                level = level.split(';')
+                if level[0] == 'LevelA':
+                    my_level = level[1]
+
+        st_font_150 = pygame.font.SysFont('bauhaus93', 150)
+        level = st_font_150.render(levels[int(my_level) - 1].split(';')[0], True, (255, 255, 0))
+        self.screen.blit(level, (self.width // 2 - 190, self.height // 2 - 200))
+
+        pygame.display.flip()
+        time.sleep(1)
 
     def startLevel(self):
         my_level = -1
@@ -215,6 +266,15 @@ class Snake:
             file.write(data)
 
     def genBombs(self):
+        if self.bombs:
+            for coords in self.bombs:
+                pygame.draw.rect(self.screen, (20, 20, 20),
+                                 [coords[0] * self.cell_size, coords[1] * self.cell_size, self.cell_size,
+                                  self.cell_size], 1)
+
+                pygame.draw.rect(self.screen, (60, 60, 60),
+                                 [coords[0] * self.cell_size + 1, coords[1] * self.cell_size + 1, self.cell_size - 1,
+                                  self.cell_size - 1])
         self.bombs = list()
         bomb_coords = list()
         for i in range(self.qutyBombs):
@@ -237,6 +297,7 @@ class Snake:
                 break
 
         if contact:
+            self.sound_bomb.play()
             if len(self.snake) > 4:
                 delList = self.snake[::-1]
                 for part in delList[:4]:
@@ -275,17 +336,18 @@ class Snake:
             score = self.serif_font_30.render(f'Target: {self.target}', True, (255, 0, 0))
             self.screen.blit(score, (470, 10))
 
-    def careerMod(self, career):
-        if career:
-            self.isCareer = True
-            self.field_border = True
-
-    def loadImg(self):
+    def loadFiles(self):
         self.appleImg = pygame.image.load(r'Data\\Img\\apple.png')
         self.appleImg = pygame.transform.scale(self.appleImg, (20, 20))
 
         self.bombImg = pygame.image.load(r'Data\\Img\\bomb.png')
         self.bombImg = pygame.transform.scale(self.bombImg, (20, 20))
+
+        self.explosionImg = pygame.image.load(r'Data\\Img\\eplshn.png')
+        self.explosionImg = pygame.transform.scale(self.explosionImg, (60, 60))
+
+        self.sound_apple = pygame.mixer.Sound(r'Data\\Music\\sound_apple.wav')
+        self.sound_bomb = pygame.mixer.Sound(r'Data\\Music\\sound_bomb.wav')
 
     def boardDraw(self):
         cells = 20

@@ -15,6 +15,7 @@ class CWin:
         self.level = level
         self.drawTitle()
         self.drawIcons()
+        self.statusOut()
 
         while 1:
             for event in pygame.event.get():
@@ -45,3 +46,21 @@ class CWin:
         st_font_100 = pygame.font.SysFont('bauhaus93', 100)
         score = st_font_100.render(f'Level {self.level} passed!', True, (255, 255, 0))
         self.screen.blit(score, (self.width // 2 - 300, self.height // 2 - 200))
+
+    def statusOut(self):
+        status = ''
+        with open(r'Data\\GData\\Levels.txt', 'r', encoding='utf-8') as file:
+            levels = file.read().split()
+            for level in levels:
+                level = level.split(';')
+                if level[0] == 'LevelA':
+                    my_level = level[1]
+
+        with open(r'Data\\GData\\Statuses.txt', 'r', encoding='utf-8') as file:
+            statuses = file.read().split()
+
+        status = statuses[int(my_level) - 1]
+
+        st_font_30 = pygame.font.SysFont('bauhaus93', 30)
+        score = st_font_30.render(f'Your status: {status}', True, (255, 255, 0))
+        self.screen.blit(score, (10, 10))
