@@ -3,6 +3,10 @@ from game_settings import Settings
 
 
 class Menu:
+    '''
+    Данный класс отвечает за вывод главного меню.
+    Также класс "Menu" взаимодействует с класом "Settings" из файла "game_settings.py"
+    '''
     def __init__(self, screen, width, height):
         self.screen = screen
         self.width = width
@@ -12,7 +16,7 @@ class Menu:
         self.setting = Settings(screen, width, height)
 
     def mainLoop(self):
-        '''Главный цикл меню. Обрабатывает входящую информацию.'''
+        '''Главный цикл меню. Обрабатывает события.'''
         self.startMenu()
         while True:
             for event in pygame.event.get():
@@ -69,8 +73,8 @@ class Menu:
             pygame.display.flip()
 
     def startMenu(self):
+        '''Функция вызывает все требуемые функции для отрисовки главного меню.'''
         self.screen.fill((53, 53, 53))
-        # self.drawBackground()
         self.drawGameName()
         self.drawStartButtonEndls()
         self.drawStartButtonCrr()
@@ -78,6 +82,7 @@ class Menu:
         self.drawSettings()
 
     def drawSettings(self):
+        '''Функция загружает и отображает иконку настроек игры.'''
         self.settings = pygame.image.load(r'Data\\Img\\settings.png')
         self.settings = pygame.transform.scale(self.settings, (50, 50))
 
@@ -124,6 +129,7 @@ class Menu:
             self.drawStartButtonCrr()
 
     def statusCheck(self):
+        '''Функция получает актуальный статус игрока в карьерном режиме.'''
         self.status = ''
         with open(r'Data\\GData\\Levels.txt', 'r', encoding='utf-8') as file:
             levels = file.read().split()
@@ -138,6 +144,7 @@ class Menu:
         self.status = statuses[int(my_level) - 1]
 
     def statusOut(self, draw=0):
+        '''Функция выводит на экран актуальный статус игрока.'''
         if draw:
             st_font_30 = pygame.font.SysFont('bauhaus93', 30)
             score = st_font_30.render(f'Your status: {self.status}', True, (255, 255, 0))

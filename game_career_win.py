@@ -2,6 +2,7 @@ import pygame
 
 
 class CWin:
+    '''Класс "CWin" отображает концовку игры (игрок выиграл) в карьерном режиме.'''
     def __init__(self, screen, width, height):
         self.screen = screen
         self.width = width
@@ -10,14 +11,16 @@ class CWin:
         self.loadImg()
 
     def mainLoop(self, level):
-        '''Главная функция. Обрабатывает входящие данные.'''
+        '''Главная функция. Обрабатывает события.'''
         self.screen.fill((53, 53, 53))
         self.level = level
         self.drawTitle()
         self.drawIcons()
         self.statusOut()
 
-        while 1:
+        pygame.display.flip()
+
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return -1
@@ -27,10 +30,10 @@ class CWin:
                     elif (self.width // 2 + 90 < event.pos[0] < self.width // 2 + 90 + 50) and (self.height // 2 - 20 < event.pos[1] < self.height // 2 - 20 + 50):
                         return 2
 
-            pygame.display.flip()
             pygame.time.delay(50)
 
     def loadImg(self):
+        '''Функция загружает иконки.'''
         self.menu_icon = pygame.image.load(r'Data\\Img\\menu_icon.png')
         self.menu_icon = pygame.transform.scale(self.menu_icon, (50, 50))
 
@@ -38,16 +41,18 @@ class CWin:
         self.next_icon = pygame.transform.scale(self.next_icon, (50, 50))
 
     def drawIcons(self):
-        '''Функция отображает картинку обьекта.'''
+        '''Функция отображает иконки.'''
         self.screen.blit(self.menu_icon, (self.width // 2 - 90, self.height // 2 - 20))
         self.screen.blit(self.next_icon, (self.width // 2 + 90, self.height // 2 - 20))
 
     def drawTitle(self):
+        '''Функция отображает название экрана'''
         st_font_100 = pygame.font.SysFont('bauhaus93', 100)
         score = st_font_100.render(f'Level {self.level} passed!', True, (255, 255, 0))
         self.screen.blit(score, (self.width // 2 - 300, self.height // 2 - 200))
 
     def statusOut(self):
+        '''Функция отображает статус игрока.'''
         status = ''
         with open(r'Data\\GData\\Levels.txt', 'r', encoding='utf-8') as file:
             levels = file.read().split()

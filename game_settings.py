@@ -2,6 +2,9 @@ import pygame
 
 
 class Settings:
+    '''
+    Класс "Settings" отвечает за настройку игры.
+    '''
     def __init__(self, screen, width, height):
         self.screen = screen
         self.width = width
@@ -11,8 +14,10 @@ class Settings:
         self.loadImg()
 
     def mainLoop(self):
+        '''Главный цикл меню. Обрабатывает события.'''
         self.startSettings()
-        while 1:
+
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return -1
@@ -37,9 +42,9 @@ class Settings:
                         self.defaultValue()
 
             pygame.time.delay(100)
-            pygame.display.flip()
 
     def defaultValue(self):
+        '''Функция сбрасывает все данные игры до начальных.'''
         with open(r'Data\\GData\\maxLength.txt', 'w') as file:
             file.write('0')
 
@@ -59,13 +64,17 @@ class Settings:
             file.write(levels)
 
     def startSettings(self):
+        '''Функция вызывает другие функции для отрисовки начального экрана настроек.'''
         self.screen.fill((53, 53, 53))
         self.screen.blit(self.menu_icon, (self.width // 2 - 200, self.height // 2 - 20))
         self.screen.blit(self.reset, (self.width // 2 - 50, self.height // 2 - 50))
         self.screen.blit(self.musicImg, (self.width // 2 + 150, self.height // 2 - 20))
         self.drawTitle()
 
+        pygame.display.flip()
+
     def loadImg(self):
+        '''Функция загружает иконки для игры.'''
         self.menu_icon = pygame.image.load(r'Data\\Img\\menu_icon.png')
         self.menu_icon = pygame.transform.scale(self.menu_icon, (50, 50))
 
@@ -76,6 +85,7 @@ class Settings:
         self.musicImg = pygame.transform.scale(self.musicImg, (50, 50))
 
     def drawTitle(self):
+        '''Функция отображает название окна.*'''
         st_font_100 = pygame.font.SysFont('bauhaus93', 150)
         score = st_font_100.render(f'Settings', True, (255, 255, 0))
         self.screen.blit(score, (self.width // 2 - 250, self.height // 2 - 300))

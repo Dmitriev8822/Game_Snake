@@ -5,6 +5,10 @@ import time
 
 
 class Snake:
+    '''
+    Класс "Snake" отвечает за процесс игры.
+    Также класс "Snake" взаимодейтвует с классом "Pause" из файла "game_pause".
+    '''
     def __init__(self, screen, width, height):
         self.screen = screen
         self.width = width
@@ -28,6 +32,9 @@ class Snake:
         self.bombs = list()
 
     def mainLoop(self, career):
+        '''
+        Главный цикл меню. Обрабатывает события. Управляет процессом игры.
+        '''
         self.pause = Pause(self.screen, self.width, self.height)
 
         if career:
@@ -94,6 +101,7 @@ class Snake:
             pygame.time.delay(100)
 
     def moveSnake(self):
+        '''Функция отвечает за передвижение змеи, проверку на столкновение с самой собой или другими обьектами.'''
         death = False
         if self.dir_move == 'UP':
             self.snake.append(self.snake[-1].copy())
@@ -134,6 +142,7 @@ class Snake:
         return 0 # все ок
 
     def drawSnake(self):
+        '''Функция "выводит змею на экран".'''
         if self.isCollisionApple():
             pygame.draw.rect(self.screen, (60, 60, 60),
                              [self.snake[-1][0] * self.cell_size + 1, self.snake[-1][1] * self.cell_size + 1,
@@ -175,6 +184,10 @@ class Snake:
                                                  head[1] * self.cell_size + self.cell_size // 2], 8)
 
     def blitAgain(self):
+        '''
+        Функция отображает изображание яблока и бомб, также отрисовывает змею.
+        Используется после вызова класса "Pause" для повторного отображения обьектов.
+        '''
         self.screen.blit(self.appleImg, (self.apple_coords[0] * self.cell_size, self.apple_coords[1] * self.cell_size))
 
         for coords in self.bombs:
@@ -186,6 +199,7 @@ class Snake:
                               self.cell_size - 2, self.cell_size - 2])
 
     def generationApple(self):
+        '''Функция генерирует координаты яблока и отображает яблоко.'''
         self.apple_coords = list()
         coords_not_normal = True
         while coords_not_normal:
@@ -196,18 +210,20 @@ class Snake:
         self.screen.blit(self.appleImg, (self.apple_coords[0] * self.cell_size, self.apple_coords[1] * self.cell_size))
 
     def isCollisionApple(self):
+        '''Функция проверяет совпадение координат яблока с координатами головы змеи.'''
         if self.snake[-1] == self.apple_coords:
             return 1
         return 0
 
     def isCollisionSnake(self):
+        '''Функция проверяет совпадение координат "головы змеи" с ее "телом".'''
         if self.snake[-1] in self.snake[:-1] and len(self.snake) > 2:
             return 1
         return 0
 
     def drawLevelQ(self):
+        '''Функция выводит актуальный уровень в начале карьерной игры.'''
         self.screen.fill((53, 53, 53))
-
         my_level = -1
         with open(r'Data\\GData\\Levels.txt', 'r', encoding='utf-8') as file:
             levels = file.read().split()
@@ -224,6 +240,7 @@ class Snake:
         time.sleep(1)
 
     def startLevel(self):
+        '''Функция определяет актуальный уровень, генерирует бомбы и цель, если это необходимо.'''
         my_level = -1
         self.target = 0
         self.qutyBombs = 0
@@ -240,6 +257,10 @@ class Snake:
         self.genBombs()
 
     def careerMove(self):
+        '''
+        Функция проверяет совпадение координат бомб и "головы змеи".
+        Также функция проверяет достигнута ли цель.
+        '''
         if self.isCollisionBomb() == -1:
             return -1
 
@@ -248,6 +269,7 @@ class Snake:
             return 2
 
     def nextLevel(self):
+        '''Функция повышает уровень игрока, если это необходимо.'''
         my_level = -1
         with open(r'Data\\GData\\Levels.txt', 'r', encoding='utf-8') as file:
             levels = file.read().split()
@@ -266,6 +288,7 @@ class Snake:
             file.write(data)
 
     def genBombs(self):
+        '''Функция генерирует бомбы, если это необходимо.'''
         if self.bombs:
             for coords in self.bombs:
                 pygame.draw.rect(self.screen, (20, 20, 20),
@@ -290,6 +313,10 @@ class Snake:
             self.screen.blit(self.bombImg, (coords[0] * self.cell_size, coords[1] * self.cell_size))
 
     def isCollisionBomb(self):
+        '''
+        Функция проверяет контакт змеи с бомбой.
+        Также функция отрисовывает последствия взрыва, если был контакт с бомбой.
+        '''
         contact = False
         for coords in self.bombs:
             if coords == self.snake[-1]:
@@ -311,6 +338,7 @@ class Snake:
                 return -1
 
     def dataOutput(self):
+        '''Функция выводит игровую информацию (score, target, time).'''
         pygame.draw.rect(self.screen, (50, 50, 50), [0, 0, self.width, 2 * self.cell_size])
 
         score = self.serif_font_30.render(f'Your score: {len(self.snake) - 1}', True, (255, 255, 0))
@@ -337,6 +365,7 @@ class Snake:
             self.screen.blit(score, (470, 10))
 
     def loadFiles(self):
+        '''Функция загружает иконки'''
         self.appleImg = pygame.image.load(r'Data\\Img\\apple.png')
         self.appleImg = pygame.transform.scale(self.appleImg, (20, 20))
 
@@ -350,6 +379,7 @@ class Snake:
         self.sound_bomb = pygame.mixer.Sound(r'Data\\Music\\sound_bomb.wav')
 
     def boardDraw(self):
+        '''Функция отрисовывает игрвое поле.'''
         cells = 20
         qx = self.width // cells
         qy = self.height // cells
